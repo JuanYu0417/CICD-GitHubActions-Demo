@@ -1,0 +1,49 @@
+
+name: Simple CI
+
+# Milloin workflow käynnistyy
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+# Ympäristömuuttujat kaikille jobsille
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Job 1: Build ja testaa
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Kloonaa repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Asenna Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      # 3. Asenna riippuvuudet
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Aja testit
+      - name: Run tests
+        run: npm test
+
+      # 5. Build
+      - name: Build application
+        run: npm run build
+
+      # 6. Tallenna build artifacts
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/
