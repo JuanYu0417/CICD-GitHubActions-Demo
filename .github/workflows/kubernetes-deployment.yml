@@ -166,7 +166,7 @@ jobs:
 
       - name: Configure kubectl
         run: |
-          echo $KUBE_CONFIG | base64 --decode > /tmp/kubeconfig.yaml
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
           export KUBECONFIG=/tmp/kubeconfig.yaml
           kubectl cluster-info --kubeconfig=$KUBECONFIG
 
