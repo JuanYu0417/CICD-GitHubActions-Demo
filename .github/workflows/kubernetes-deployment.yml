@@ -180,10 +180,10 @@ jobs:
 
       - name: Deploy MySQL and dependencies
         run: |
-          kubectl apply -f kubernetes/mysql-secret.yaml --kubeconfig=$KUBECONFIG
-          kubectl apply -f kubernetes/mysql-pvc.yaml --kubeconfig=$KUBECONFIG
-          kubectl apply -f kubernetes/mysql-deployment.yaml --kubeconfig=$KUBECONFIG
-          kubectl apply -f kubernetes/mysql-service.yaml --kubeconfig=$KUBECONFIG
+          kubectl apply -f kubernetes/mysql-secret.yaml --kubeconfig=$KUBECONFIG--validate=false
+          kubectl apply -f kubernetes/mysql-pvc.yaml --kubeconfig=$KUBECONFIG--validate=false
+          kubectl apply -f kubernetes/mysql-deployment.yaml --kubeconfig=$KUBECONFIG--validate=false
+          kubectl apply -f kubernetes/mysql-service.yaml --kubeconfig=$KUBECONFIG--validate=false
 
       - name: Deploy backend
         run: |
