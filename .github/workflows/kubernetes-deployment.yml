@@ -166,9 +166,9 @@ jobs:
 
       - name: Configure kubectl
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
+          echo $KUBE_CONFIG | base64 --decode > /tmp/kubeconfig.yaml
+          export KUBECONFIG=/tmp/kubeconfig.yaml
+          kubectl cluster-info --kubeconfig=$KUBECONFIG
 
       - name: Update image tags in Kubernetes manifests
         run: |
@@ -180,10 +180,10 @@ jobs:
 
       - name: Deploy MySQL and dependencies
         run: |
-          kubectl apply -f kubernetes/mysql-secret.yaml --kubeconfig=$KUBECONFIG --validate=false
-          kubectl apply -f kubernetes/mysql-pvc.yaml --kubeconfig=$KUBECONFIG --validate=false
-          kubectl apply -f kubernetes/mysql-deployment.yaml --kubeconfig=$KUBECONFIG --validate=false
-          kubectl apply -f kubernetes/mysql-service.yaml --kubeconfig=$KUBECONFIG --validate=false
+          kubectl apply -f kubernetes/mysql-secret.yaml --kubeconfig=$KUBECONFIG
+          kubectl apply -f kubernetes/mysql-pvc.yaml --kubeconfig=$KUBECONFIG
+          kubectl apply -f kubernetes/mysql-service.yaml --kubeconfig=$KUBECONFIG
+          kubectl apply -f kubernetes/mysql-deployment.yaml --kubeconfig=$KUBECONFIG
 
       - name: Deploy backend
         run: |
