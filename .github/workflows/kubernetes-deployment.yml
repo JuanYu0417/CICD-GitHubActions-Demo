@@ -180,6 +180,8 @@ jobs:
 
       - name: Deploy MySQL and dependencies
         run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
+          export KUBECONFIG=/tmp/kubeconfig.yaml
           kubectl apply -f kubernetes/mysql-secret.yaml --kubeconfig=$KUBECONFIG
           kubectl apply -f kubernetes/mysql-pvc.yaml --kubeconfig=$KUBECONFIG
           kubectl apply -f kubernetes/mysql-service.yaml --kubeconfig=$KUBECONFIG
@@ -187,18 +189,24 @@ jobs:
 
       - name: Deploy backend
         run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
+          export KUBECONFIG=/tmp/kubeconfig.yaml
           kubectl apply -f kubernetes/backend-deployment.yaml
           kubectl apply -f kubernetes/backend-service.yaml
           kubectl rollout status deployment/backend
 
       - name: Deploy frontend
         run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
+          export KUBECONFIG=/tmp/kubeconfig.yaml
           kubectl apply -f kubernetes/frontend-deployment.yaml
           kubectl apply -f kubernetes/frontend-service.yaml
           kubectl rollout status deployment/frontend
 
       - name: Verify deployment
         run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
+          export KUBECONFIG=/tmp/kubeconfig.yaml
           echo "=== Pods ==="
           kubectl get pods
           echo "=== Services ==="
@@ -208,6 +216,8 @@ jobs:
 
       - name: Run smoke tests
         run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
+          export KUBECONFIG=/tmp/kubeconfig.yaml
           # Odota että service on valmis
           sleep 10
 
