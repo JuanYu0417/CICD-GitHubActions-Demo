@@ -178,10 +178,12 @@ jobs:
           # Päivitä backend image
           sed -i "s|image: .*backend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:main-${{ github.sha }}|" kubernetes/backend-deployment.yaml
 
-      - name: Deploy MySQL (jos ei ole jo olemassa)
+      - name: Deploy MySQL and dependencies
         run: |
-          kubectl apply -f kubernetes/mysql-deployment.yaml
+          kubectl apply -f kubernetes/mysql-secret.yaml
+          kubectl apply -f kubernetes/mysql-pvc.yaml
           kubectl apply -f kubernetes/mysql-service.yaml
+          kubectl apply -f kubernetes/mysql-deployment.yaml
 
       - name: Deploy backend
         run: |
