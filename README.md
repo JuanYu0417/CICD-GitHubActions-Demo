@@ -8,3 +8,4 @@ NEW_BASE64_STRING=$(cat embedded_kubeconfig.yaml | base64 -w 0)
 echo $NEW_BASE64_STRING
 ```
 ### should "paste as plain text"when set Actions secrets.
+### use k3s to slove ip connect
