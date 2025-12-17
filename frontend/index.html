@@ -107,7 +107,6 @@
 
         async function initDB() {
             try {
-                // *** 关键修改：明确指定方法为 POST ***
                 const response = await fetch('/k8s-api/init-db', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
