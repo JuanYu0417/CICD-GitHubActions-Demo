@@ -29,7 +29,7 @@ def get_users():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/init-db')
+@app.route('/api/init-db', methods=['GET', 'POST'])
 def init_db():
     try:
         conn = get_db_connection()
