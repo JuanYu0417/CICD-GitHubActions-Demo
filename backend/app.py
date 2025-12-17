@@ -16,18 +16,46 @@ def get_db_connection():
 def health():
     return jsonify({"status": "healthy"})
 
-@app.route('/api/users')
-def get_users():
+@app.route('/api/users', methods=['GET', 'POST'])
+def manage_users():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users")
-        users = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return jsonify(users)
+
+        if request.method == 'POST':
+            data = request.get_json()
+            name = data.get('name')
+            email = data.get('email')
+
+            if not name:
+                return jsonify({"error": "Name is required"}), 400
+
+            cursor.execute(
+                "INSERT INTO users (name, email) VALUES (%s, %s)",
+                (name, email)
+            )
+            conn.commit()
+
+            new_id = cursor.lastrowid
+            cursor.execute("SELECT * FROM users WHERE id = %s", (new_id,))
+            user = cursor.fetchone()
+
+            return jsonify(user), 201
+
+        else:
+            cursor.execute("SELECT * FROM users")
+            users = cursor.fetchall()
+            return jsonify(users)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 @app.route('/api/init-db', methods=['GET', 'POST'])
 def init_db():
