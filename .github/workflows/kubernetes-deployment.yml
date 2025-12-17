@@ -195,6 +195,17 @@ jobs:
           kubectl apply -f kubernetes/backend-deployment.yaml
           kubectl apply -f kubernetes/backend-service.yaml
           kubectl rollout status deployment/backend
+          
+      - name: Debug Backend Failure
+        if: failure()  
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
+          export KUBECONFIG=/tmp/kubeconfig.yaml
+          echo "=== POD STATUS ==="
+          kubectl get pods
+          echo "=== POD DETAILS ==="
+          kubectl describe pods -l app=backend
+          kubectl logs -l app=backend --tail=50 --all-containers=true
 
       - name: Deploy frontend
         run: |
