@@ -229,7 +229,7 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
           export KUBECONFIG=/tmp/kubeconfig.yaml
           sleep 10
-          kubectl run curl-test --image=curlimages/curl --restart=Never --rm -i -- curl -v -f http://frontend:80 || exit 1
+          kubectl run curl-test --image=curlimages/curl --restart=Never --rm -i -- curl -v -f http://frontend:80/cicd || exit 1
           kubectl run curl-test-api --image=curlimages/curl --restart=Never --rm -i -- curl -v -f http://frontend:80/api/health || exit 1
           echo "✅ Smoke tests passed!"
 
