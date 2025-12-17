@@ -172,12 +172,10 @@ jobs:
 
       - name: Update image tags in Kubernetes manifests
         run: |
-          # Päivitä frontend image
-          sed -i "s|image: .*frontend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:main-${{ github.sha }}|" kubernetes/frontend-deployment.yaml
-
-          # Päivitä backend image
-          sed -i "s|image: .*backend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:main-${{ github.sha }}|" kubernetes/backend-deployment.yaml
-
+          SHA_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
+          sed -i "s|image: .*frontend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:main-$SHA_SHORT|" kubernetes/frontend-deployment.yaml
+          sed -i "s|image: .*backend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:main-$SHA_SHORT|" kubernetes/backend-deployment.yaml
+          
       - name: Deploy MySQL and dependencies
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
