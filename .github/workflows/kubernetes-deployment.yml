@@ -183,7 +183,7 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
           export KUBECONFIG=/tmp/kubeconfig.yaml
           kubectl apply -f kubernetes/mysql-secret.yaml --kubeconfig=$KUBECONFIG
-          kubectl apply -f kubernetes/backend-config.yaml --kubeconfig=$KUBECONFIG
+          kubectl apply -f backend/backend-config.yaml --kubeconfig=$KUBECONFIG
           kubectl apply -f kubernetes/mysql.pvc.yaml --kubeconfig=$KUBECONFIG
           kubectl apply -f kubernetes/mysql-service.yaml --kubeconfig=$KUBECONFIG
           kubectl apply -f kubernetes/mysql-deployment.yaml --kubeconfig=$KUBECONFIG
