@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify,request
 import mysql.connector
 import os
 
@@ -54,7 +54,7 @@ def manage_users():
         conn.close()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5001)
 
 
 @app.route('/api/init-db', methods=['GET', 'POST'])
