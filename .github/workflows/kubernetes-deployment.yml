@@ -8,8 +8,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME_FRONTEND: ${{ github.repository }}/frontend
-  IMAGE_NAME_BACKEND: ${{ github.repository }}/backend
+  IMAGE_NAME_FRONTEND: juanyu0417/cicd-githubactions-demo/frontend
+  IMAGE_NAME_BACKEND: juanyu0417/cicd-githubactions-demo/backend
 
 jobs:
   # Job 1: Build ja testaa frontend
@@ -195,7 +195,7 @@ jobs:
           kubectl apply -f kubernetes/backend-deployment.yaml
           kubectl apply -f kubernetes/backend-service.yaml
           kubectl rollout status deployment/backend
-          
+
       - name: Debug Backend Failure
         if: failure()  
         run: |
