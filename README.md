@@ -9,3 +9,4 @@ echo $NEW_BASE64_STRING
 ```
 ### should "paste as plain text"when set Actions secrets.
 ### use k3s to slove ip connect
+### use lowercase letters in Linux
