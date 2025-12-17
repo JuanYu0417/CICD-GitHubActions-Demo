@@ -175,7 +175,7 @@ jobs:
           SHA_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
           sed -i "s|image: .*frontend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:main-$SHA_SHORT|" kubernetes/frontend-deployment.yaml
           sed -i "s|image: .*backend.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:main-$SHA_SHORT|" kubernetes/backend-deployment.yaml
-          
+
       - name: Deploy MySQL and dependencies
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > /tmp/kubeconfig.yaml
@@ -230,23 +230,38 @@ jobs:
           export KUBECONFIG=/tmp/kubeconfig.yaml
           # Odota että service on valmis
           sleep 10
-
+          
           # Hae frontend service external IP/NodePort
           FRONTEND_URL=$(kubectl get service frontend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
+          
           # Jos LoadBalancer ei ole käytössä, käytä NodePort
           if [ -z "$FRONTEND_URL" ]; then
-            NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
             NODE_PORT=$(kubectl get service frontend -o jsonpath='{.spec.ports[0].nodePort}')
+            
+            # fitch ExternalIP
+            NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
+            
+            # fitch InternalIP 
+            if [ -z "$NODE_IP" ]; then
+              NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
+            fi
+            
+            # use localhost
+            if [ -z "$NODE_IP" ]; then
+              NODE_IP="127.0.0.1"
+            fi
+            
             FRONTEND_URL="http://$NODE_IP:$NODE_PORT"
           fi
-
+          
+          echo "Testing URL: $FRONTEND_URL"
+          
           # Testaa että sivusto vastaa
           curl -f $FRONTEND_URL || exit 1
-
+          
           # Testaa backend health endpoint
           curl -f $FRONTEND_URL/api/health || exit 1
-
+          
           echo "✅ Smoke tests passed!"
 
   # Job 4: Rollback jos deployment epäonnistuu
