@@ -3,13 +3,12 @@ kind: Service
 metadata:
   name: frontend  # ← DNS-nimi: frontend.default.svc.cluster.local
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: frontend  # ← Valitsee kaikki podit joilla label app=frontend
   ports:
   - port: 80           # ← Service:n portti (ClusterIP:llä)
     targetPort: 80     # ← Pod:in kontin portti
-    nodePort: 31540    # ← Node:n portti (30000-32767)
 
 # Tämä luo kolme porttitasoa:
 # 1. Service ClusterIP:  10.96.x.x:80      (Klusterin sisäinen)
